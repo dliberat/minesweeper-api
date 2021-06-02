@@ -30,6 +30,9 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+additional_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+ALLOWED_HOSTS += additional_hosts.split(',')
+
 
 # Application definition
 
