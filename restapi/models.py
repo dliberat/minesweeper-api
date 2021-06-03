@@ -1,15 +1,17 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+from restapi import const
+
 class Game(models.Model):
     num_rows = models.IntegerField(
-        validators=[MinValueValidator(6), MaxValueValidator(20)],
+        validators=[MinValueValidator(const.MIN_ROWS), MaxValueValidator(const.MAX_ROWS)],
     )
     num_cols = models.IntegerField(
-        validators=[MinValueValidator(6), MaxValueValidator(20)],
+        validators=[MinValueValidator(const.MIN_COLS), MaxValueValidator(const.MAX_COLS)],
     )
     num_mines = models.IntegerField(
-        validators=[MinValueValidator(2)]
+        validators=[MinValueValidator(const.MIN_MINES)]
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
