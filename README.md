@@ -24,3 +24,8 @@ API test
 - However, for the purposes of this demo, a barebones front-end with only a few static files should suffice
 - Decoupled design means that front end can be easily refactored into separate app if necessary
 - Result: Develop front-end in the same repo and serve as static content.
+
+## When revealing adjacent cells recursively, do flags break recursion?
+
+- Decision: No.
+- Rationale: Even if the flag breaks the recursion, it would become instantly apparent that the flag was not needed on that tile.
