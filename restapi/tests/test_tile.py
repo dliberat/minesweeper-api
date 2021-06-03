@@ -62,6 +62,21 @@ class TileTest(unittest.TestCase):
         t = Tile.set_flag(t)
         self.assertTrue(Tile.is_flag(t))
 
+    def test_unset_flag(self):
+        t = int('000100', 2)
+        t = Tile.unset_flag(t)
+        self.assertFalse(Tile.is_flag(t))
+        self.assertFalse(Tile.is_mine(t))
+        self.assertEqual(0, Tile.count_neighbors(t))
+
+        t = int('010101', 2)
+        t = Tile.unset_flag(t)
+        self.assertFalse(Tile.is_flag(t))
+        self.assertTrue(Tile.is_mine(t))
+        self.assertEqual(2, Tile.count_neighbors(t))
+
+
+
     def test_count_neighbors(self):
         t = int('001000', 2)
         self.assertEqual(1, Tile.count_neighbors(t))

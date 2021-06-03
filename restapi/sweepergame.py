@@ -1,9 +1,10 @@
 from enum import Enum
 import random
 from copy import deepcopy
-from typing import List
+from typing import List, Tuple
 
 from restapi import const
+from restapi.exceptions import InvalidMoveException, GameOverException
 
 
 class GameStatus(Enum):
@@ -43,8 +44,13 @@ class Tile():
     def is_flag(t):
         return (t >> 2) % 2 == 1
 
+    @staticmethod
     def set_flag(t):
         return t | 4
+
+    @staticmethod
+    def unset_flag(t):
+        return t - 4
 
     @staticmethod
     def add_neighbor(t):
@@ -166,3 +172,159 @@ class SweeperGame():
             return GameStatus.USER_WON
 
         return GameStatus.IN_PROGRESS
+
+    def is_valid_tile_coords(self, r: int, c: int) -> bool:
+        """Check if the specified coordinates
+        are within the `tiles` array bounds."""
+        return r >= 0 and c >= 0 and r < self.num_rows and c < self.num_cols
+
+    def set_flag(self, r: int, c: int):
+        """User sets or unsets a flag or question mark on a tile.
+
+        Args:
+            r - Row index of the tile to modify
+            c - Column index of the tile to modify
+
+        Returns:
+            A new SweeperGame object with the modified tiles array.
+
+        Raises:
+            GameOverException if attempting to modify a finished game.
+
+            InvalidMoveException if the coordinates do not correspond
+            to a valid location on the grid, or if they correspond
+            to a tile that has already been revealed.
+        """
+        if not self.status == GameStatus.IN_PROGRESS:
+            raise GameOverException()
+
+        if not self.is_valid_tile_coords(r, c):
+            raise InvalidMoveException('Invalid coordinates (%d, %d)' % (r,c))
+
+        tile = self.tiles[r][c]
+
+        if Tile.is_visible(tile):
+            raise InvalidMoveException('Cannot set flag on visible tile')
+
+        clone = SweeperGame.from_tile_arr(self.tiles)
+
+        if not Tile.is_flag(tile):
+            clone.tiles[r][c] = Tile.set_flag(tile)
+        else:
+            clone.tiles[r][c] = Tile.unset_flag(tile)
+
+        return clone
+
+    def reveal_tile(self, r: int, c: int):
+        """User clicks on a tile, revealing its contents.
+        When a cell with no adjacent mines is revealed,
+        all adjacent squares will be revealed recursively.
+
+        If a tile containing a mine is revealed,
+        game status is updated to USER LOST.
+
+        If all non-mine tiles have been revealed after this
+        move is applied, game status is updated to USER WON.
+
+        Args:
+            r - Row index of the tile to reveal
+            c - Column index of the tile to reveal
+
+        Returns:
+            A new SweeperGame object containing the modified tile array.
+
+        Raises:
+            GameOverException if attempting to modify a finished game.
+
+            InvalidMoveException if the coordinates do not correspond
+            to a valid location on the grid, or if the chosen tile
+            has already been revealed.
+        """
+        #
+        # Basic idiot-proofing
+        #
+        if not self.status == GameStatus.IN_PROGRESS:
+            raise GameOverException()
+
+        if not self.is_valid_tile_coords(r, c):
+            raise InvalidMoveException('Invalid coordinates (%d, %d)' % (r,c))
+
+        tile = self.tiles[r][c]
+
+        if Tile.is_visible(tile):
+            raise InvalidMoveException('Cannot reveal visible tile')
+
+        #
+        # Now the work begins.
+        # There are basically two cases.
+        # Either the user clicked on a mine, or they didnt.
+        #
+        clone = SweeperGame.from_tile_arr(self.tiles)
+
+        #
+        # Case 1) User clicked on a mine
+        #
+        if Tile.is_mine(tile):
+            clone.tiles[r][c] = Tile.set_visible(tile)
+            clone.status = GameStatus.USER_LOST
+            return clone
+
+
+        #
+        # Case 2) User clicked on a non-mine. If the clicked
+        # tile doesn't have any neighboring mines, we need to
+        # check all of its neighbors to see if any of them
+        # can also be revealed.
+        #
+        queue = [(r, c)]
+
+        while queue:
+            current, queue = queue[0], queue[1:]
+            current_r, current_c = current
+
+            tile = clone.tiles[current_r][current_c]
+
+            if Tile.is_visible(tile):
+                # this tile has already been processed
+                continue
+
+            clone.tiles[current_r][current_c] = Tile.set_visible(tile)
+
+            neighbors = clone.get_neighbors_to_reveal(current_r, current_c)
+            queue += neighbors
+
+        clone.status = clone.check_status()
+        return clone
+
+    def get_neighbors_to_reveal(self, r: int, c: int) -> List[Tuple[int, int]]:
+        """Returns a list of adjacent tiles that don't contain mines
+        and are not already visible.
+
+        Returns:
+            List of tuple, where each tuple is (row_index, col_index).
+        """
+        neighbors = []
+
+        if Tile.count_neighbors(self.tiles[r][c]) != 0:
+            # only tiles without adjacent mines get expanded
+            return neighbors
+
+        max_r = len(self.tiles) - 1
+        max_c = len(self.tiles[0]) - 1
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+
+                if i == 0 and j == 0:
+                    continue
+
+                # array bounds check
+                if r+i < 0 or r+i > max_r or c+j < 0 or c+j > max_c:
+                    continue
+
+                # don't re-expand visible tiles after we've already revealed them
+                if Tile.is_visible(self.tiles[r+i][c+j]):
+                    continue
+
+                neighbors.append((r+i, c+j))
+
+        return neighbors
