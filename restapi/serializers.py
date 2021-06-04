@@ -34,15 +34,15 @@ class GameDetailSerializer(serializers.ModelSerializer):
             'tiles',
         ]
 
-class LatestStateMixin(serializers.ModelSerializer):
+class CurrentStateMixin(serializers.ModelSerializer):
     state = serializers.SerializerMethodField()
 
     def get_state(self, obj):
-        """Replay the entire history of moves
-        and build the latest game state"""
+        """Replay the history of moves and build the
+        state of the game after applying the current move"""
 
         move_history = Move.objects.filter(
-            game_id=obj.game_id).order_by('order')
+            game_id=obj.game_id, order__lte=obj.order).order_by('order')
 
         game = SweeperGame.from_tile_arr(obj.game_id.tiles)
 
@@ -79,7 +79,7 @@ class MoveSerializer(serializers.ModelSerializer):
         read_only_fields = ('order',)
 
 
-class MoveDetailSerializer(LatestStateMixin):
+class MoveDetailSerializer(CurrentStateMixin):
     class Meta:
         model = Move
         fields = [
@@ -93,7 +93,7 @@ class MoveDetailSerializer(LatestStateMixin):
         ]
 
 
-class MoveCreateSerializer(LatestStateMixin):
+class MoveCreateSerializer(CurrentStateMixin):
     class Meta:
         model = Move
         fields = [
