@@ -25,6 +25,7 @@ from restapi import views
 
 router = routers.DefaultRouter()
 router.register(r'games', views.GameViewSet)
+router.register(r'moves', views.MoveViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),

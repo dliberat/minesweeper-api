@@ -29,3 +29,9 @@ API test
 
 - Decision: No.
 - Rationale: Even if the flag breaks the recursion, it would become instantly apparent that the flag was not needed on that tile.
+
+## Object model strategy for storing moves
+
+- Best to store a complete move history. It's not strictly speaking necessary based on the project requirements, but usually a good idea for implementing undos, replays, etc.
+- Is it necessary to store each intermediate state of the game, or is it sufficient to store only the moves and re-create the game state on the fly each time?
+- Result: Recreating the game state on the fly is fast, and easier to implement. If performance requirements are stricter in the future, this decision can be easily revised.
