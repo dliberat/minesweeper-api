@@ -70,4 +70,65 @@ class ApiClient {
             .then(cb)
             .catch(this.errHandler);
     }
+
+    getInitialGameState(gameId, cb) {
+        fetch(`${this.baseurl}/games/${gameId}/`)
+            .then(res => res.json())
+            .then(res => {
+                const g = new Game(res.tiles, GAME_STATUS_RUNNING);
+                cb(g);
+            })
+            .catch(this.errHandler);
+    }
+
+    getGameStateAfterMove(moveId, cb) {
+        fetch(`${this.baseurl}/moves/${moveId}`)
+            .then(res => res.json())
+            .then(res => {
+                const g = new Game(res.state.tiles, res.state.status);
+                cb(g);
+            })
+            .catch(this.errHandler);
+    }
+
+    /**
+     * Retrieves the latest game state using the following
+     * procedure:
+     * 1. Try getting the move history for `gameId`.
+     * If there are moves, then it gets the game state
+     * after applying the latest move.
+     * 2. If there are no moves, tries to get the initial
+     * game state.
+     * 3. If that fails, the gameId does not exist.
+     *
+     * @param {number} gameId
+     * @param {func} cb
+     */
+    getLatestGameState(gameId, cb) {
+
+        fetch(`${this.baseurl}/moves/?game_id=${gameId}`)
+            .then(res => res.json())
+            .then(res => {
+                if (res.results) {
+                    // the API should return moves in order,
+                    // but it doesn't hurt to make sure
+                    // we get the latest one
+                    let latest = res.results[0];
+                    for (let mv of res.results) {
+                        if (mv.order > latest.order) {
+                            latest = mv;
+                        }
+                    }
+
+                    this.getGameStateAfterMove(latest.id, cb);
+
+
+                } else {
+                    // no moves for this game exist.
+                    // Try fetching the initial game state
+                    this.getInitialGameState(gameId, cb);
+                }
+            })
+            .catch(this.errHandler);
+    }
 }

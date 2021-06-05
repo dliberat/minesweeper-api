@@ -9,8 +9,19 @@ function populateGameList() {
         for (let game of gameList) {
             const li = $(`<li id="game--link--${game.id}"></li>`);
             li.text(`Game #${game.id} (${game.num_rows} x ${game.num_cols})`);
+            li.on('click', handleGameListClicked);
             dash.append(li);
         }
+    });
+}
+
+function handleGameListClicked(e) {
+    const gameId = e.target.id.slice(12);
+
+    const client = new ApiClient();
+    client.getLatestGameState(gameId, (game) => {
+        console.log('got latest game state');
+        console.log(game);
     });
 }
 
