@@ -1,0 +1,44 @@
+/* Sticky footer Start */
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    background-color: #ccc;
+}
+
+.content {
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+.footer {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    background-color: #b9b3a3;
+    border-top: 12px solid #404660;
+}
+
+/* Sticky Footer End */
+
+.footer--container {
+    margin: 0.5em 1em;
+    text-align: right;
+}
+
+a {
+    color: #404660;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #112530;
+    text-decoration: underline;
+}
+
+.center {
+    text-align: center;
+}

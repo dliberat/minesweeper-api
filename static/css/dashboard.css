@@ -1,0 +1,80 @@
+/*
+    Grid layout
+*/
+#dashboard--grid {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    grid-template-rows: 1fr;
+
+    max-width: 600px;
+    max-height: 175px;
+    margin: 1.5em auto;
+}
+
+.dashboard-grid-cell {
+    border: 1px solid #aaa;
+    align-self: stretch;
+    box-sizing: border-box;
+}
+
+#dashboard-controls {
+    grid-column-start: 1;
+}
+
+#dashboard-gamelist {
+    grid-column-start: 2;
+    overflow-y: scroll;
+}
+
+
+/*
+    General grid cell styling
+*/
+.dashboard-grid-cell-header {
+    font-size: 0.75em;
+    background-color: #b9b3a3;
+    text-align: center;
+    padding: 0.2em 0em;
+}
+
+.dashboard-grid-cell-contents {
+    padding: 0.6em;
+}
+
+/*
+    Detailed styling for New Game form
+*/
+.input--numeric {
+    max-width: 3em;
+    margin: 0.2em;
+}
+
+.label {
+    padding: 0.5em;
+}
+
+#input--submit {
+    padding: 0.5em;
+    margin-top: 1em;
+}
+
+#input--submit:hover {
+    cursor: pointer;
+}
+
+#submit-btn-container {
+    margin-top: 1em;
+}
+
+/*
+    Detailed styling for game list
+*/
+#games-list > li {
+    color: #404660;
+}
+
+#games-list > li:hover {
+    color: #112530;
+    cursor: pointer;
+    text-decoration: underline;
+}
