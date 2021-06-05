@@ -123,6 +123,12 @@ Making a `GET` request to `/api/moves/<move id>/` will return a `state` field th
     }
 ```
 
+## Time tracking
+
+Make a `GET` request to `/api/games/<game id>` to see that game's details.
+Before any moves have been played, the `start_time` and `end_time` fields will be null.
+As soon as the first move is played in a game, the `start_time` field will be updated with the current timestamp.
+When the last move is played in a game (the move that causes a game over),  the `end_time` field will be updated with the current timestamp.
 
 # ADR
 

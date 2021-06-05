@@ -1,9 +1,14 @@
+import logging
+from datetime import datetime
+
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.postgres.fields import ArrayField
 
 from restapi import const
 from restapi.sweepergame import SweeperGame
+
+logger = logging.getLogger('sweeper')
 
 class Game(models.Model):
     class Meta:
@@ -21,6 +26,16 @@ class Game(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True,
         editable=False,
+    )
+    start_time = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text='Time at which the user made the first move.'
+    )
+    end_time = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text='Time at which the game was completed.'
     )
     tiles = ArrayField(
         ArrayField(models.IntegerField())
@@ -78,6 +93,8 @@ class Move(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             # auto-increment the order field separately for each game_id
+            logger.debug('Creating new move')
+
             agg = Move.objects.filter(
                 game_id=self.game_id
                 ).aggregate(models.Max('order'))
@@ -86,6 +103,10 @@ class Move(models.Model):
                 self.order = agg['order__max'] + 1
             else:
                 # this is the first move in the game
+                now = datetime.now()
+                logger.debug('First move in game. Current timestamp=%s', now.isoformat())
                 self.order = 0
+                self.game_id.start_time = now
+                self.game_id.save()
 
         super(Move, self).save(*args, **kwargs)

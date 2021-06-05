@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from restapi.exceptions import InvalidMoveException, GameOverException
 from restapi.models import Game, Move
-from restapi.sweepergame import SweeperGame
+from restapi.sweepergame import SweeperGame, GameStatus
 
 class GameSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,6 +33,8 @@ class GameDetailSerializer(serializers.ModelSerializer):
             'num_cols',
             'num_mines',
             'created_at',
+            'start_time',
+            'end_time',
             'tiles',
         ]
 
@@ -39,7 +43,12 @@ class CurrentStateMixin(serializers.ModelSerializer):
 
     def get_state(self, obj):
         """Replay the history of moves and build the
-        state of the game after applying the current move"""
+        state of the game after applying the current move.
+
+        Side Effects:
+            Updates Game model's `end_time` field if the
+            move results in the game being finished.
+        """
 
         move_history = Move.objects.filter(
             game_id=obj.game_id, order__lte=obj.order).order_by('order')
@@ -58,6 +67,10 @@ class CurrentStateMixin(serializers.ModelSerializer):
             raise ValidationError('Invalid move')
         except GameOverException:
             raise ValidationError('Cannot apply move to completed game')
+
+        if obj.game_id.end_time is None and game.status != GameStatus.IN_PROGRESS:
+            obj.game_id.end_time = datetime.now()
+            obj.game_id.save()
 
         return {
             'status': game.status.value,
