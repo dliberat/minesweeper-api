@@ -17,6 +17,11 @@ class ApiClient {
         this.baseurl = '../api';
     }
 
+    errHandler(err) {
+        alert("An error occurred. Please refresh the page and try again.");
+        console.error(err);
+    }
+
     /**
      *
      * @param {func} cb Callback function that takes
@@ -36,7 +41,33 @@ class ApiClient {
                 if (json.next) {
                     this.getGameList(cb, json.next);
                 }
-            });
+            })
+            .catch(this.errHandler);
 
+    }
+
+    /**
+     *
+     * @param {number} num_rows
+     * @param {number} num_cols
+     * @param {number} num_mines
+     * @param {func} cb Callback function to handle the result of
+     * the create operation. Takes a single argument containing the
+     * JSON response from the server.
+     */
+    createNewGame(num_rows, num_cols, num_mines, cb) {
+        if (isNaN(num_rows) || isNaN(num_cols) || isNaN(num_mines)) {
+            alert("Invalid number of rows, columns, or mines (NaN).");
+            return;
+        }
+        if (num_rows < 6 || num_rows > 20 || num_cols < 6 || num_cols > 20) {
+            alert("Invalid number of rows or columns. Rows and columns must be integers between 6 and 20");
+            return;
+        }
+
+        const body = {num_rows, num_cols, num_mines}
+        postData(`${this.baseurl}/games/`, body)
+            .then(cb)
+            .catch(this.errHandler);
     }
 }

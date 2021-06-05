@@ -14,6 +14,23 @@ function populateGameList() {
     });
 }
 
+function handleNewGameBtnClicked() {
 
+    const inputRows = $("#input--numrows");
+    const inputCols = $("#input--numcols");
+    const inputMines = $("#input--nummines");
+    const rows = parseInt(inputRows.val(), 10);
+    const cols = parseInt(inputCols.val(), 10);
+    const mines = parseInt(inputMines.val(), 10);
+
+    const client = new ApiClient();
+    client.createNewGame(rows, cols, mines, handleNewGameResponse);
+
+}
+
+function handleNewGameResponse(response) {
+    populateGameList();
+}
 
 document.addEventListener('DOMContentLoaded', populateGameList);
+$('#input--submit').on('click', handleNewGameBtnClicked);
