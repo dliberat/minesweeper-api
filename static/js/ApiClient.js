@@ -134,19 +134,12 @@ class ApiClient {
      */
     getLatestGameState(gameId, cb) {
 
-        this._get(`${this.baseurl}/moves/?game_id=${gameId}`)
+        this._get(`${this.baseurl}/moves/?game_id=${gameId}&ordering=-order`)
             .then(res => {
                 if (res.results && res.results.length > 0) {
-                    // the API should return moves in order,
-                    // but it doesn't hurt to make sure
-                    // we get the latest one
+                    // By sorting by -order, we guarantee
+                    // the latest move will be on top
                     let latest = res.results[0];
-                    for (let mv of res.results) {
-                        if (mv.order > latest.order) {
-                            latest = mv;
-                        }
-                    }
-
                     this.getGameStateAfterMove(latest.id, cb);
 
 
