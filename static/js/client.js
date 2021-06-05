@@ -1,21 +1,30 @@
-async function postData(url='', data={}) {
-    const response = await fetch(url, {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-      throw Error(response.statusText);
-    }
-    return response.json();
-}
-
 class ApiClient {
     constructor() {
         this.baseurl = '../api';
     }
+
+    async _get(url) {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw Error(response.statusText);
+        }
+        return response.json();
+    }
+
+    async _post(url, data={}) {
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response.json();
+    }
+
 
     errHandler(err) {
         alert("An error occurred. Please refresh the page and try again.");
@@ -34,8 +43,7 @@ class ApiClient {
     getGameList(cb, uri=null) {
         const target = uri || `${this.baseurl}/games/`;
 
-        fetch(target)
-            .then(res => res.json())
+        this._get(target)
             .then(json => {
                 cb(json.results);
                 if (json.next) {
@@ -66,24 +74,22 @@ class ApiClient {
         }
 
         const body = {num_rows, num_cols, num_mines}
-        postData(`${this.baseurl}/games/`, body)
+        this._post(`${this.baseurl}/games/`, body)
             .then(cb)
             .catch(this.errHandler);
     }
 
     getInitialGameState(gameId, cb) {
-        fetch(`${this.baseurl}/games/${gameId}/`)
-            .then(res => res.json())
+        this._get(`${this.baseurl}/games/${gameId}/`)
             .then(res => {
-                const g = new Game(res.tiles, GAME_STATUS_RUNNING);
+                const g = new Game(res.tiles, Game.STATUS_RUNNING);
                 cb(g);
             })
             .catch(this.errHandler);
     }
 
     getGameStateAfterMove(moveId, cb) {
-        fetch(`${this.baseurl}/moves/${moveId}`)
-            .then(res => res.json())
+        this._get(`${this.baseurl}/moves/${moveId}/`)
             .then(res => {
                 const g = new Game(res.state.tiles, res.state.status);
                 cb(g);
@@ -106,10 +112,9 @@ class ApiClient {
      */
     getLatestGameState(gameId, cb) {
 
-        fetch(`${this.baseurl}/moves/?game_id=${gameId}`)
-            .then(res => res.json())
+        this._get(`${this.baseurl}/moves/?game_id=${gameId}`)
             .then(res => {
-                if (res.results) {
+                if (res.results && res.results.length > 0) {
                     // the API should return moves in order,
                     // but it doesn't hurt to make sure
                     // we get the latest one
