@@ -1,5 +1,27 @@
 # minesweeper-API
-API test
+
+# About
+
+A REST API for playing the classic Minesweeper game, developed in Python using the Django Rest Framework.
+
+# Try it out
+
+A live version of this app is available at https://minesweeper.danliberatori.com/ .
+In order to play games, you'll need to log in. Feel free to use any of the following user accounts:
+
+| user   | password    |
+|--------|-------------|
+|alice   | minesweeper |
+|bob     | minesweeper |
+|charlie | minesweeper |
+|dave    | minesweeper |
+|eve     | minesweeper |
+|francis | minesweeper |
+
+
+# Detailed documentation
+
+This README contains basic instructions for how to use the API, and should be sufficient to allow you to design your own client and play games. However, a more detailed description of all of the endpoints, parameters, response codes, etc. is available on [SwaggerHub](https://app.swaggerhub.com/apis-docs/dliberat/minesweeper-api/1.0).
 
 # Getting Started
 
@@ -16,6 +38,12 @@ docker-compose run --rm web python manage.py createsuperuser
 
 4. Browse to [http://localhost:8000/api/](http://localhost:8000/api/) to view the browsable API.
 5. Browse to [http://localhost:8000/static/client.html](http://localhost:8000/static/client.html) to play the game. Note that you will need to be logged in in order to play. You can click the Log In button and use the superuser credentials you created in step 3.
+
+**Note**
+
+You may run into permissions issues because Docker runs containers as root. If these problems arise, stop any running containers and run the following command to reset permissions on the entire source code folder.
+
+`sudo chown -R $USER:$USER .`
 
 # How to play
 
