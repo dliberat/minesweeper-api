@@ -7,10 +7,35 @@ API test
 
 1. Ensure Docker and Docker Compose are installed (https://docs.docker.com/compose/install/)
 2. cd into the project directory and run `docker-compose up`
-3. Browse to [http://localhost:8000/api/](http://localhost:8000/api/) to view the browsable API.
-4. Browse to [http://localhost:8000/static/client.html](http://localhost:8000/static/client.html) to play the game.
+3. At the bare minimum, you will need to create a superuser in order to log in and play games.
+To do this, run the following command in a separate terminal and follow the instructions provided by Django.
+
+```
+docker-compose run --rm web python manage.py createsuperuser
+```
+
+4. Browse to [http://localhost:8000/api/](http://localhost:8000/api/) to view the browsable API.
+5. Browse to [http://localhost:8000/static/client.html](http://localhost:8000/static/client.html) to play the game. Note that you will need to be logged in in order to play. You can click the Log In button and use the superuser credentials you created in step 3.
 
 # How to play
+
+## Authentication
+
+The REST API is configured to work with Session authentication.
+
+You will need to log in. See Django and DRF documentation for details on how to achieve this, or do so easily via the Django login screen. The login screen can be accessedby clicking the "Log In" link at the top of `/static/client.html` or when viewing the browsable API at `/api/`.
+
+When you log in, you will be given a cookie containing a CSRF token. You will need to include this token in the `X-CSRF-Token` header with each request.
+
+**Example GET request**
+
+```javascript
+fetch('http://localhost:8000/api/games/', {
+    headers: {
+        'X-CSRFToken': '1KewIEkQIA0TUCP73ijvfO0REqMvIYw7Y2Izbu221gqkkMHHtyv9SiL3J75gpeWP',
+    }
+}).then(dosomething);
+```
 
 ## Starting a new game
 
