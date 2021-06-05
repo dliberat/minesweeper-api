@@ -4,7 +4,14 @@ This guide is a work in progress.
 Assumes Ubuntu 18.04 with git already installed.
 
 ### Install docker and docker compose
-Follow instructions at (https://docs.docker.com/compose/install/)
+
+Follow instructions at (https://docs.docker.com/compose/install/).
+Don't forget to add your user account to the `docker` group so that you can run Docker without sudo.
+
+```bash
+sudo usermod -aG docker $USER
+```
+
 
 ### Install nginx
 
@@ -49,7 +56,7 @@ upstream django {
 
 server {
         listen 80 default_server;
-        listen [::]80 default_server;
+        listen [::]:80 default_server;
 
         server_name _;
         charset utf-8;
@@ -83,7 +90,7 @@ From the source code directory, build the container
 
 `docker-compose -f docker-compose-prod.yml build`
 
-Then make sure to modify permissions as needed (may need to repeat this step a few times throughout the process):
+If you run into permissions issues, you may need to run the following command to reset permissions in the folder.
 
 `sudo chown -R ${USER}:${USER} .`
 
