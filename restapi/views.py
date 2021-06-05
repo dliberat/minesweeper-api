@@ -1,6 +1,6 @@
 import logging
 from rest_framework import viewsets
-
+from django.shortcuts import redirect
 from django.utils.timezone import now
 
 from restapi.models import Game, Move
@@ -127,3 +127,6 @@ class MoveViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Move.objects.filter(owner=self.request.user)
+
+def index(request):
+    return redirect('/static/client.html')

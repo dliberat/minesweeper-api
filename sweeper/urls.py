@@ -28,6 +28,7 @@ router.register(r'games', views.GameViewSet, basename='games')
 router.register(r'moves', views.MoveViewSet, basename='moves')
 
 urlpatterns = [
+    path('', views.index),
     path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
