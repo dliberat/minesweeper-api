@@ -26,6 +26,16 @@ class GameViewSet(viewsets.ModelViewSet):
 
 
     def perform_create(self, serializer):
+        try:
+            num_mines = self.request.data['num_mines']
+            num_rows = self.request.data['num_rows']
+            num_cols = self.request.data['num_cols']
+        except Exception:
+            raise ValidationError('Missing required parameter.')
+
+        if num_mines >= num_rows * num_cols:
+            raise ValidationError('Number of mines must be less than the total number of tiles on the grid.')
+
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
