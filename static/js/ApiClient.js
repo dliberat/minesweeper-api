@@ -3,8 +3,25 @@ class ApiClient {
         this.baseurl = '../api';
     }
 
+    _getCsrf(name='csrftoken') {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     async _get(url) {
-        const response = await fetch(url);
+        const params = {headers: {'X-CSRFToken': this._getCsrf()}}
+        const response = await fetch(url, params);
         if (!response.ok) {
             throw Error(response.statusText);
         }
@@ -12,13 +29,18 @@ class ApiClient {
     }
 
     async _post(url, data={}) {
-        const response = await fetch(url, {
+        const params = {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        });
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': this._getCsrf(),
+            },
+            body: JSON.stringify(data),
+        }
+
+        const response = await fetch(url, params);
         if (!response.ok) {
           throw Error(response.statusText);
         }
@@ -161,5 +183,22 @@ class ApiClient {
                 cb(gm);
             })
             .catch(this.errHandler);
+    }
+
+    /**
+     * Somewhat hacky way of determining if the user is logged in.
+     */
+    isLoggedIn(cb) {
+
+        const params = {headers: {'X-CSRFToken': this._getCsrf()}}
+        fetch(`${this.baseurl}/games/`, params)
+            .catch(cb(false))
+            .then(response => {
+                if (response.status === 200) {
+                    cb(true);
+                } else {
+                    cb(false);
+                }
+            });
     }
 }

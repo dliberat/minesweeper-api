@@ -69,7 +69,29 @@ function handleTileAction(game, row, col, action, isVisible) {
 
     const client = new ApiClient();
     client.makeMove(game.gameId, row, col, action, renderGame);
-  }
+}
 
-document.addEventListener('DOMContentLoaded', populateGameList);
-$('#input--submit').on('click', handleNewGameBtnClicked);
+function handleContentLoaded() {
+    const client = new ApiClient();
+    const a = $('#login--link');
+
+    client.isLoggedIn(isLoggedIn => {
+        if (!isLoggedIn) {
+
+            a.attr('href', '../api-auth/login/?next=/static/client.html');
+            a.text('Log In');
+
+        } else {
+
+            a.attr('href', '../api-auth/logout/?next=/static/client.html');
+            a.text('Log Out');
+
+            populateGameList();
+            $('#input--submit').on('click', handleNewGameBtnClicked);
+
+        }
+
+    })
+}
+
+document.addEventListener('DOMContentLoaded', handleContentLoaded);
