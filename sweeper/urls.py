@@ -24,8 +24,8 @@ from rest_framework import routers
 from restapi import views
 
 router = routers.DefaultRouter()
-router.register(r'games', views.GameViewSet)
-router.register(r'moves', views.MoveViewSet)
+router.register(r'games', views.GameViewSet, basename='games')
+router.register(r'moves', views.MoveViewSet, basename='moves')
 
 urlpatterns = [
     path('api/', include(router.urls)),

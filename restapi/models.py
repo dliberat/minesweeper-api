@@ -4,6 +4,7 @@ from datetime import datetime
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.postgres.fields import ArrayField
+from django.conf import settings
 
 from restapi import const
 from restapi.sweepergame import SweeperGame
@@ -14,6 +15,7 @@ class Game(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     num_rows = models.IntegerField(
         validators=[MinValueValidator(const.MIN_ROWS), MaxValueValidator(const.MAX_ROWS)],
     )
@@ -67,6 +69,7 @@ class Move(models.Model):
         (FLAG, 'Flag'),
     ]
 
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     game_id = models.ForeignKey(
         Game,
         on_delete=models.CASCADE,
