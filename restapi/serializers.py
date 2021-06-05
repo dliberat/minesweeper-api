@@ -1,7 +1,7 @@
-from datetime import datetime
-
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
+from django.utils.timezone import now
 
 from restapi.exceptions import InvalidMoveException, GameOverException
 from restapi.models import Game, Move
@@ -69,7 +69,7 @@ class CurrentStateMixin(serializers.ModelSerializer):
             raise ValidationError('Cannot apply move to completed game')
 
         if obj.game_id.end_time is None and game.status != GameStatus.IN_PROGRESS:
-            obj.game_id.end_time = datetime.now()
+            obj.game_id.end_time = now()
             obj.game_id.save()
 
         return {
