@@ -51,10 +51,25 @@ function handleNewGameBtnClicked() {
 
 }
 
-function handleNewGameResponse(game) {
+function handleNewGameResponse(res) {
     populateGameList();
-    renderGame(game);
+    const client = new ApiClient();
+    client.getLatestGameState(res.id, renderGame);
 }
+
+function handleTileAction(game, row, col, action, isVisible) {
+    if (game.status !== Game.STATUS_RUNNING) {
+      // can't click once game is over
+      return;
+    }
+    if (isVisible) {
+      // can't click on an already revealed tile
+      return;
+    }
+
+    const client = new ApiClient();
+    client.makeMove(game.gameId, row, col, action, renderGame);
+  }
 
 document.addEventListener('DOMContentLoaded', populateGameList);
 $('#input--submit').on('click', handleNewGameBtnClicked);

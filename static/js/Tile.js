@@ -32,6 +32,8 @@ class Tile {
       const neighborCount = this.neighboringMineCount();
       if (this.isMine() && this.isVisible()) {
         return 'background-color: #f00';
+      } else if (!this.isVisible() && this.isFlag()) {
+        return 'color: #ffffff';
       } else if (neighborCount <= 1) {
         return 'color: #404660';
       } else if (neighborCount === 2) {
@@ -47,6 +49,7 @@ class Tile {
       td.attr("id", `tile--${row}-${col}`);
       td.attr("style", this.displayStyle());
       td.addClass("tile");
+      td.contextmenu(() => false);
 
 
       if (!this.isVisible()) {
@@ -54,20 +57,16 @@ class Tile {
 
         if (this.parent.status === Game.STATUS_RUNNING) {
           td.addClass("hoverable");
-          td.on("click", this.handleReveal, false);
-          td.on("contextmenu", this.handleFlag, false);
+          td.on("click",
+                () => handleTileAction(this.parent, row, col, 'R', this.isVisible())
+                );
+          td.on("contextmenu",
+                () => handleTileAction(this.parent, row, col, 'F', this.isVisible())
+                );
         }
       }
 
       td.text(this.displayText());
       return td
-    }
-    handleReveal(e) {
-      console.log('Revealing tile');
-      return false;
-    }
-    handleFlag(e) {
-      console.log('Flagging tile');
-      return false;
     }
   }

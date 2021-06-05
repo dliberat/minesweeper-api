@@ -136,4 +136,30 @@ class ApiClient {
             })
             .catch(this.errHandler);
     }
+
+    /**
+     *
+     * @param {number} gameId
+     * @param {number} row
+     * @param {number} col
+     * @param {string} action 'R' to reveal a tile, or 'F' to flag
+     * or unflag a tile.
+     * @param {func} cb Callback function called with the updated
+     * game state after the move is applied.
+     */
+    makeMove(gameId, row, col, action, cb) {
+        const body = {
+            row,
+            col,
+            action,
+            game_id: gameId,
+        }
+
+        this._post(`${this.baseurl}/moves/`, body)
+            .then(res => {
+                const gm = new Game(res.game_id, res.state.tiles, res.state.status);
+                cb(gm);
+            })
+            .catch(this.errHandler);
+    }
 }
