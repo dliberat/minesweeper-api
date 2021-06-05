@@ -184,4 +184,21 @@ class ApiClient {
             })
             .catch(this.errHandler);
     }
+
+    /**
+     * Somewhat hacky way of determining if the user is logged in.
+     */
+    isLoggedIn(cb) {
+
+        const params = {headers: {'X-CSRFToken': this._getCsrf()}}
+        fetch(`${this.baseurl}/games/`, params)
+            .catch(cb(false))
+            .then(response => {
+                if (response.status === 200) {
+                    cb(true);
+                } else {
+                    cb(false);
+                }
+            });
+    }
 }
