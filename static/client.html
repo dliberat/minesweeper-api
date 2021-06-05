@@ -12,17 +12,129 @@
   <meta property="og:url" content="">
   <meta property="og:image" content="">
 
-  <link rel="stylesheet" href="css/client.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/game.css">
 </head>
 
 <body>
 
-  <!-- Add your site or application content here -->
-  <p class="red">Hello world! This is HTML5 Boilerplate.</p>
-  <script src="js/vendor/modernizr-{{MODERNIZR_VERSION}}.min.js"></script>
-  <script src="js/app.js"></script>
+
+<div class="content">
 
 
+
+
+  <header>
+    <div class="center">
+      <h1>Sweeper</h1>
+    </div>
+  </header>
+
+
+    <div id="outer--container">
+
+
+      <div id="dashboard--grid">
+        <div id="dashboard-controls-header" class="dashboard-grid-cell-header dashboard-grid-cell">
+          Start New Game
+        </div>
+        <div id="dashboard-controls" class="dashboard-grid-cell">
+          <div class="dashboard-grid-cell-contents">
+            <div>
+              <label class="label" for="input--numrows">Rows:</label>
+              <input
+                id="input--numrows"
+                name="input--numrows"
+                type="number"
+                class="input--numeric"
+                value="8"
+                min="6"
+                max="20"
+              />
+            </div>
+            <div>
+              <label class="label" for="input--numcols">Columns:</label>
+              <input
+                id="input--numcols"
+                name="input--numcols"
+                type="number"
+                class="input--numeric"
+                value="8"
+                min="6"
+                max="20"
+              />
+            </div>
+            <div>
+              <label class="label" for="input--nummines">Mines:</label>
+              <input
+                id="input--nummines"
+                name="input--nummines"
+                type="number"
+                class="input--numeric"
+                value="8"
+                min="2"
+              />
+            </div>
+            <div class="center" id="submit-btn-container">
+              <input
+                id="input--submit"
+                name="input--submit"
+                type="button"
+                value="Start!"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div id="dashboard-gamelist-header" class="dashboard-grid-cell-header dashboard-grid-cell">
+          Resume Existing Game
+        </div>
+        <div id="dashboard-gamelist" class="dashboard-grid-cell">
+          <div class="dashboard-grid-cell-contents">
+            <ul id="games-list">
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="game--header">
+        <div id="game--title"></div>
+        <div id="game--mines-remaining"></div>
+        <div id="game--status" class="center"></div>
+      </div>
+
+      <div id="game--container">
+        <table>
+          <tbody id="game--tbody">
+          </tbody>
+        </table>
+      </div>
+
+  </div>
+
+
+
+
+
+</div>
+<footer class="footer">
+  <div class="footer--container">
+    <a href="https://www.danliberatori.com" target="_blank">www.danliberatori.com</a>
+  </div>
+</footer>
 </body>
+
+<script
+			  src="https://code.jquery.com/jquery-3.6.0.slim.js"
+			  integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY="
+        crossorigin="anonymous"></script>
+
+<script src="js/ApiClient.js"></script>
+<script src="js/Tile.js"></script>
+<script src="js/Game.js"></script>
+<script src="js/dashboard.js"></script>
 
 </html>
