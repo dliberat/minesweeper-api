@@ -47,6 +47,7 @@ class MoveViewSet(viewsets.ModelViewSet):
     detail_serializer_class = MoveDetailSerializer
     create_serializer_class = MoveCreateSerializer
     filterset_fields = ['game_id']
+    http_method_names = ['get', 'post', 'head', 'options']
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
