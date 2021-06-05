@@ -1,10 +1,10 @@
 import logging
-from datetime import datetime
 
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
+from django.utils.timezone import now
 
 from restapi import const
 from restapi.sweepergame import SweeperGame
@@ -106,10 +106,8 @@ class Move(models.Model):
                 self.order = agg['order__max'] + 1
             else:
                 # this is the first move in the game
-                now = datetime.now()
-                logger.debug('First move in game. Current timestamp=%s', now.isoformat())
                 self.order = 0
-                self.game_id.start_time = now
+                self.game_id.start_time = now()
                 self.game_id.save()
 
         super(Move, self).save(*args, **kwargs)
