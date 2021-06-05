@@ -82,7 +82,7 @@ class ApiClient {
     getInitialGameState(gameId, cb) {
         this._get(`${this.baseurl}/games/${gameId}/`)
             .then(res => {
-                const g = new Game(res.tiles, Game.STATUS_RUNNING);
+                const g = new Game(res.id, res.tiles, Game.STATUS_RUNNING);
                 cb(g);
             })
             .catch(this.errHandler);
@@ -91,7 +91,7 @@ class ApiClient {
     getGameStateAfterMove(moveId, cb) {
         this._get(`${this.baseurl}/moves/${moveId}/`)
             .then(res => {
-                const g = new Game(res.state.tiles, res.state.status);
+                const g = new Game(res.game_id, res.state.tiles, res.state.status);
                 cb(g);
             })
             .catch(this.errHandler);

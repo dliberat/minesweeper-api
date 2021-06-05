@@ -4,7 +4,10 @@ class Game {
     static STATUS_WON = 1;
     static STATUS_LOST = 2;
 
-    constructor(tileArray, status) {
+    constructor(gameId, tileArray, status) {
+        this.gameId = gameId;
+        this.status = status;
+
         // convert array of integers to Tile objects
         this.tiles = []
         for (let i = 0; i < tileArray.length; i++) {
@@ -14,7 +17,19 @@ class Game {
             }
         }
 
-        this.status = status;
+    }
+
+    statusAsText() {
+        if (this.status === Game.STATUS_RUNNING) {
+            return 'Playing';
+        }
+        if (this.status === Game.STATUS_WON) {
+            return 'You won!';
+        }
+        if (this.status === Game.STATUS_LOST) {
+            return 'You lost!';
+        }
+        console.error('Invalid game status');
     }
 
     minesRemaining() {

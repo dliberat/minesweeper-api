@@ -15,14 +15,26 @@ function populateGameList() {
     });
 }
 
+function renderGame(game) {
+    const hud = $('#game--header')
+    hud.css('display', 'grid');
+
+    const tbody = $('#game--tbody');
+    const mRemaining = $('#game--mines-remaining');
+    const title = $('#game--title');
+    const status = $('#game--status');
+
+    game.renderGrid(tbody);
+    mRemaining.text(game.minesRemaining());
+    title.text(`Game #${game.gameId}`);
+    status.text(game.statusAsText());
+}
+
 function handleGameListClicked(e) {
     const gameId = e.target.id.slice(12);
 
     const client = new ApiClient();
-    client.getLatestGameState(gameId, (game) => {
-        console.log('got latest game state');
-        console.log(game);
-    });
+    client.getLatestGameState(gameId, renderGame);
 }
 
 function handleNewGameBtnClicked() {
@@ -39,8 +51,9 @@ function handleNewGameBtnClicked() {
 
 }
 
-function handleNewGameResponse(response) {
+function handleNewGameResponse(game) {
     populateGameList();
+    renderGame(game);
 }
 
 document.addEventListener('DOMContentLoaded', populateGameList);
