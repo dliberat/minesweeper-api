@@ -101,8 +101,85 @@ And launch. Add the -d flag to daemonize.
 Now test that everything is working by accessing the site via the server's public IP address on port 80.
 Nginx should forward API requests to Django (e.g. (http://localhost/api/)), and serve static files by itself (e.g., (http://localhost/static/client.html))
 
+
+### Run the app as a service
+
+Add the following file under `/etc/systemd/system/sweeper.service`.
+
+```
+[Unit]
+Description=Minesweeper API
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/sbin/sweeper-start.sh
+ExecStop=/bin/bash /usr/sbin/sweeper-stop.sh
+TimeoutStartSec=0
+Restart=on-failure
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n
+
+
+[Install]
+WantedBy=default.target
+```
+
+Add the following file under `/usr/sbin/sweeper-start.sh`.
+
+```bash
+#!/bin/bash
+
+cd /home/dliberat/minesweeper-api # modify this to be the actual location of the source code
+docker-compose -f docker-compose-prod.yml up
+```
+
+Give the file executable permissions:
+
+```bash
+sudo chmod +x sweeper-start.sh
+```
+
+Add the following file under `/usr/sbin/sweeper-stop.sh`.
+
+```bash
+#!/bin/bash
+
+cd /home/ubuntu/minesweeper-api # modify this to be the actual location of the source code
+docker-compose -f docker-compose-prod.yml down
+```
+
+And give the file executable permissions:
+
+```bash
+sudo chmod +x sweeper-stop.sh
+```
+
+Reload the systemctl daemon.
+
+```bash
+sudo systemctl daemon-reload
+```
+
+The service can now be started and stopped with `systemctl`.
+
+```bash
+sudo systemctl status sweeper
+sudo systemctl start sweeper
+sudo systemctl stop sweeper
+sudo systemctl restart sweeper
+sudo systemctl enable sweeper
+```
+
+Service logs can also be viewed:
+
+```bash
+journalctl -f -u sweeper.service
+```
+
+
 ### TO DO:
 
-- Turn the app into a service and set to auto-start on boot
-- Add HTTPS
 - Set up CI/CD
