@@ -44,10 +44,6 @@ class CurrentStateMixin(serializers.ModelSerializer):
     def get_state(self, obj):
         """Replay the history of moves and build the
         state of the game after applying the current move.
-
-        Side Effects:
-            Updates Game model's `end_time` field if the
-            move results in the game being finished.
         """
 
         move_history = Move.objects.filter(
@@ -67,10 +63,6 @@ class CurrentStateMixin(serializers.ModelSerializer):
             raise ValidationError('Invalid move')
         except GameOverException:
             raise ValidationError('Cannot apply move to completed game')
-
-        if obj.game_id.end_time is None and game.status != GameStatus.IN_PROGRESS:
-            obj.game_id.end_time = now()
-            obj.game_id.save()
 
         return {
             'status': game.status.value,
