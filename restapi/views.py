@@ -68,7 +68,7 @@ class MoveViewSet(viewsets.ModelViewSet):
         try:
             game_id = int(self.request.data['game_id'])
             row = int(self.request.data['row'])
-            col = int(self.request.data['row'])
+            col = int(self.request.data['col'])
             action = self.request.data['action']
         except ValueError:
             raise ValidationError('Missing required field.')
