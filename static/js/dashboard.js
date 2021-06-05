@@ -74,12 +74,14 @@ function handleTileAction(game, row, col, action, isVisible) {
 function handleContentLoaded() {
     const client = new ApiClient();
     const a = $('#login--link');
+    const submit = $('#input--submit');
 
     client.isLoggedIn(isLoggedIn => {
         if (!isLoggedIn) {
 
             a.attr('href', '../api-auth/login/?next=/static/client.html');
             a.text('Log In');
+            submit.hide();
 
         } else {
 
@@ -87,7 +89,8 @@ function handleContentLoaded() {
             a.text('Log Out');
 
             populateGameList();
-            $('#input--submit').on('click', handleNewGameBtnClicked);
+            submit.show();
+            submit.on('click', handleNewGameBtnClicked);
 
         }
 
