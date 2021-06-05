@@ -4,7 +4,7 @@
 #dashboard--grid {
     display: grid;
     grid-template-columns: 2fr 3fr;
-    grid-template-rows: 1fr;
+    grid-template-rows: 1.5em 1fr;
 
     max-width: 600px;
     max-height: 175px;
@@ -17,13 +17,25 @@
     box-sizing: border-box;
 }
 
+#dashboard-controls-header{
+    grid-column-start: 1;
+    grid-row-start: 1;
+}
+
+#dashboard-gamelist-header{
+    grid-column-start: 2;
+    grid-row-start: 1;
+}
+
 #dashboard-controls {
     grid-column-start: 1;
+    grid-row-start: 2;
 }
 
 #dashboard-gamelist {
     grid-column-start: 2;
     overflow-y: scroll;
+    grid-row-start: 2;
 }
 
 
