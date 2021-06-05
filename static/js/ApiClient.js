@@ -94,8 +94,8 @@ class ApiClient {
             alert("Invalid number of rows or columns. Rows and columns must be integers between 6 and 20");
             return;
         }
-        if (num_mines >= num_rows*num_cols) {
-            alert("Invalid number of mines. Number of mines must be less than the total number of tiles in the game.");
+        if (num_mines < 2 || num_mines >= num_rows*num_cols) {
+            alert("Invalid number of mines. Number of mines must be greater than 1 and less than the total number of tiles in the game.");
             return;
         }
 
